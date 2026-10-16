@@ -59,4 +59,10 @@ async def load_update_documents(
     # previous table provider has the output of the previous run
     # we'll use this to diff the input from the prior
     delta_documents = await get_delta_docs(input_documents, previous_table_provider)
+    if not delta_documents.deleted_inputs.empty:
+        msg = (
+            "Incremental updates do not support deleted input documents. "
+            "Run a full index to remove previously indexed data."
+        )
+        raise ValueError(msg)
     return delta_documents.new_inputs
